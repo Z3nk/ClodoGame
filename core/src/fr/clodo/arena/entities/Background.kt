@@ -4,19 +4,26 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.clodo.arena.base.Drawable
+import fr.clodo.arena.tools.ClodoWorld
 
-class Background(img: String): Drawable{
+class Background(img: String) : Drawable {
+    companion object {
+        fun createNightBackground(): Background {
+            return Background("background_night.png")
+        }
+    }
 
+    private val sprite: Sprite = Sprite(Texture(img))
 
-    val sprite: Sprite = Sprite(Texture(img))
-    init{
+    init {
         sprite.setSize(1927 * ClodoWorld.ratioX, 1081 * ClodoWorld.ratioY)
     }
 
-    override fun update() {
+    override fun update(delta: Float) {
     }
 
-    override fun draw(batch: SpriteBatch) {
+    override fun draw(batch: SpriteBatch, delta: Float) {
+        update(delta)
         sprite.draw(batch)
     }
 

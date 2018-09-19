@@ -1,16 +1,13 @@
 package fr.clodo.arena.screens
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Sprite
 import fr.clodo.arena.ClodoArenaGame
 import fr.clodo.arena.entities.Background
-import fr.clodo.arena.entities.ClodoWorld
+import fr.clodo.arena.entities.Dwarf
 
-class MenuScreen(val game: ClodoArenaGame): Screen {
-    private val background = Background("background_night.png")
+class MenuScreen(val game: ClodoArenaGame) : Screen {
+    private val background = Background.createNightBackground()
+    private val dwarf = Dwarf.createDwarf()
 
     override fun hide() {
     }
@@ -20,7 +17,8 @@ class MenuScreen(val game: ClodoArenaGame): Screen {
     }
 
     override fun render(delta: Float) {
-        background.draw(game.batch)
+        background.draw(game.batch, delta)
+        dwarf.draw(game.batch, delta)
     }
 
     override fun pause() {
@@ -33,6 +31,7 @@ class MenuScreen(val game: ClodoArenaGame): Screen {
     }
 
     override fun dispose() {
-       background.dispose()
+        dwarf.dispose()
+        background.dispose()
     }
 }
