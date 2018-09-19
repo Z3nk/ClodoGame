@@ -7,10 +7,11 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import fr.clodo.arena.tools.ClodoWorld
-import fr.clodo.arena.screens.MenuScreen
+import fr.clodo.arena.screens.GameScreen
 
 class ClodoArenaGame : Game() {
 
@@ -26,7 +27,7 @@ class ClodoArenaGame : Game() {
         viewport.apply()
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0f)
         font = BitmapFont()
-        this.setScreen(MenuScreen(this))
+        this.setScreen(GameScreen(this))
     }
 
     override fun render() {

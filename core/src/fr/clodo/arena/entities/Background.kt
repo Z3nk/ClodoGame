@@ -6,14 +6,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.tools.ClodoWorld
 
-class Background(img: String) : Drawable {
+class Background(spriteSheet: String) : Drawable {
     companion object {
         fun createNightBackground(): Background {
             return Background("background_night.png")
         }
     }
 
-    private val sprite: Sprite = Sprite(Texture(img))
+    private val sprite: Sprite = Sprite(Texture(spriteSheet))
 
     init {
         sprite.setSize(1927 * ClodoWorld.ratioX, 1081 * ClodoWorld.ratioY)
