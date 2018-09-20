@@ -16,9 +16,9 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>) : Drawable {
         }
 
         private const val frameDuration = 0.25f
-        private const val sizeX = 256
-        private const val sizeY = 256
-        private const val startX = 200f
+        private const val sizeX = 64f
+        private const val sizeY = 64f
+        private const val startX = 50f
         private const val startY = 100f
 
         private fun getWalkAnimation() = Animation(frameDuration, getWalkTexture(), Animation.PlayMode.LOOP)
@@ -30,7 +30,7 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>) : Drawable {
 
     init {
         sprite.setPosition(startX, startY)
-        sprite.setSize(sizeX * ClodoWorld.ratioX, sizeY * ClodoWorld.ratioY)
+        sprite.setSize(sizeX , sizeY )
     }
 
     override fun update(delta: Float) {

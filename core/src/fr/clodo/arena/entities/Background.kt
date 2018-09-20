@@ -16,7 +16,7 @@ class Background(spriteSheet: String) : Drawable {
     private val sprite: Sprite = Sprite(Texture(spriteSheet))
 
     init {
-        sprite.setSize(1927 * ClodoWorld.ratioX, 1081 * ClodoWorld.ratioY)
+        sprite.setSize(1927f, 1081f)
     }
 
     override fun update(delta: Float) {
