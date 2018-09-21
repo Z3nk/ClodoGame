@@ -1,9 +1,6 @@
-package fr.clodo.arena.entities
+package fr.clodo.arena.drawables
 
-import com.badlogic.gdx.graphics.g2d.Animation
-import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.g2d.*
 import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.helper.Animator
 
@@ -36,7 +33,7 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>) : Drawable {
         stateTime += delta
     }
 
-    override fun draw(batch: SpriteBatch, delta: Float) {
+    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
         update(delta)
         sprite.setRegion(walkingAnimation.getKeyFrame(stateTime))
         sprite.draw(batch)

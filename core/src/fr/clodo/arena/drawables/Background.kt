@@ -1,6 +1,7 @@
-package fr.clodo.arena.entities
+package fr.clodo.arena.drawables
 
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.clodo.arena.base.Drawable
@@ -21,7 +22,7 @@ class Background(spriteSheet: String) : Drawable {
     override fun update(delta: Float) {
     }
 
-    override fun draw(batch: SpriteBatch, delta: Float) {
+    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
         update(delta)
         sprite.draw(batch)
     }

@@ -1,15 +1,16 @@
-package fr.clodo.arena.entities
+package fr.clodo.arena.drawables
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import fr.clodo.arena.base.Clickable
 import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.helper.EntitiesAnimator
-import fr.clodo.arena.virtual.Menu
 import java.util.*
 
-class Button(val x: Float, val y: Float, spriteSheet: String, val width: Float, val height: Float, private val entitiesAnimator: EntitiesAnimator, private val callback: () -> Unit) : Drawable {
+class Button(val x: Float, val y: Float, spriteSheet: String, val width: Float, val height: Float, private val entitiesAnimator: EntitiesAnimator, private val callback: () -> Unit) : Drawable, Clickable {
 
     companion object {
         const val TAG = "Button"
@@ -34,7 +35,7 @@ class Button(val x: Float, val y: Float, spriteSheet: String, val width: Float, 
         sprite.setPosition(x, y)
     }
 
-    fun onClick(x: Float, y: Float) {
+    override fun onClick(x: Float, y: Float) {
         if (x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
             callback()
             isAnimed = true
@@ -53,7 +54,7 @@ class Button(val x: Float, val y: Float, spriteSheet: String, val width: Float, 
         }
     }
 
-    override fun draw(batch: SpriteBatch, delta: Float) {
+    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
         if (isAlive) {
             sprite.draw(batch)
         }

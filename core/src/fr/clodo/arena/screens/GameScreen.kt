@@ -11,8 +11,10 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import fr.clodo.arena.ClodoArenaGame
-import fr.clodo.arena.enums.State
+import fr.clodo.arena.enums.ClodoScreen
+import fr.clodo.arena.enums.ClodoState
 import fr.clodo.arena.helper.ClodoWorld
+import fr.clodo.arena.helper.Preferences
 import fr.clodo.arena.virtual.Menu
 import fr.clodo.arena.virtual.Scene
 
@@ -28,14 +30,17 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
     lateinit var camera: Camera
     lateinit var viewport: Viewport
 
+
     private val menu = Menu(this)
     private val scene = Scene(this)
 
-    var currentState = State.LOBBY
+    var currentState = ClodoState.TUTORIAL
+    var currentScreen = ClodoScreen.LOBBY
     var cameraInitialised = false
     private var scaling = 0f
 
     override fun show() {
+        currentState = if (Preferences.tutorialIsDone()) ClodoState.NORMAL else ClodoState.TUTORIAL
         batch = SpriteBatch()
         camera = OrthographicCamera()
         viewport = StretchViewport(ClodoWorld.WORLD_WIDTH.toFloat(), ClodoWorld.WORLD_HEIGHT.toFloat(), camera)
@@ -50,15 +55,15 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
 
     private fun update(delta: Float) {
         updateCamera()
-        scene.update( delta)
+        scene.update(delta)
         menu.update(delta)
     }
 
     override fun render(delta: Float) {
         update(delta)
         batch.begin()
-        scene.draw(batch, delta)
-        menu.draw(batch, delta)
+        scene.draw(batch, font, delta)
+        menu.draw(batch, font, delta)
         batch.end()
     }
 
@@ -99,7 +104,7 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
     }
 
     private fun updateCamera() {
-        if (currentState == State.IN_GAME && !cameraInitialised) {
+        if (currentScreen == ClodoScreen.IN_GAME && !cameraInitialised) {
             scaling += 0.001f
             camera.viewportWidth = camera.viewportWidth / (1 + scaling)
             camera.viewportHeight = camera.viewportHeight / (1 + scaling)

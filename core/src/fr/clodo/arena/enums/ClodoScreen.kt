@@ -1,5 +1,5 @@
 package fr.clodo.arena.enums
 
-enum class State {
+enum class ClodoScreen {
     LOBBY, IN_GAME
 }

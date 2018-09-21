@@ -1,10 +1,11 @@
 package fr.clodo.arena.virtual
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.clodo.arena.base.Clickable
 import fr.clodo.arena.base.Drawable
-import fr.clodo.arena.entities.Background
-import fr.clodo.arena.entities.Dwarf
+import fr.clodo.arena.drawables.Background
+import fr.clodo.arena.drawables.Dwarf
 import fr.clodo.arena.screens.GameScreen
 
 class Scene(val gameScreen: GameScreen) : Drawable, Clickable {
@@ -20,9 +21,9 @@ class Scene(val gameScreen: GameScreen) : Drawable, Clickable {
         dwarf.update(delta)
     }
 
-    override fun draw(batch: SpriteBatch, delta: Float) {
-        background.draw(batch, delta)
-        dwarf.draw(batch, delta)
+    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
+        background.draw(batch, font, delta)
+        dwarf.draw(batch, font, delta)
     }
 
     override fun dispose() {
