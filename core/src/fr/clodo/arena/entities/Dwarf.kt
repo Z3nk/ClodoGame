@@ -5,8 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import fr.clodo.arena.base.Drawable
-import fr.clodo.arena.tools.Animator
-import fr.clodo.arena.tools.ClodoWorld
+import fr.clodo.arena.helper.Animator
 
 class Dwarf(val walkingAnimation: Animation<TextureRegion>) : Drawable {
 

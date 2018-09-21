@@ -11,12 +11,10 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import fr.clodo.arena.ClodoArenaGame
-import fr.clodo.arena.entities.Background
-import fr.clodo.arena.entities.Button
-import fr.clodo.arena.entities.Dwarf
-import fr.clodo.arena.tools.ClodoWorld
-import java.util.*
-import kotlin.concurrent.timerTask
+import fr.clodo.arena.enums.State
+import fr.clodo.arena.helper.ClodoWorld
+import fr.clodo.arena.virtual.Menu
+import fr.clodo.arena.virtual.Scene
 
 class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
 
@@ -30,17 +28,12 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
     lateinit var camera: Camera
     lateinit var viewport: Viewport
 
-    private val background = Background.createNightBackground()
-    private val dwarf = Dwarf.createDwarf()
-    private var gameStarted = false
-    private var cameraInitialised = false
+    private val menu = Menu(this)
+    private val scene = Scene(this)
+
+    var currentState = State.LOBBY
+    var cameraInitialised = false
     private var scaling = 0f
-    private var playBtn = Button.createPlayButton(ClodoWorld.WORLD_WIDTH / 2f, ClodoWorld.WORLD_HEIGHT / 2f) {
-        Gdx.app.log(TAG, "PLAY BUTTON")
-        Timer().schedule(timerTask {
-            gameStarted = true
-        }, 1000)
-    }
 
     override fun show() {
         batch = SpriteBatch()
@@ -55,13 +48,17 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
         initCamera()
     }
 
-    override fun render(delta: Float) {
-
+    private fun update(delta: Float) {
         updateCamera()
+        scene.update( delta)
+        menu.update(delta)
+    }
+
+    override fun render(delta: Float) {
+        update(delta)
         batch.begin()
-        background.draw(batch, delta)
-        dwarf.draw(batch, delta)
-        playBtn.draw(batch, delta)
+        scene.draw(batch, delta)
+        menu.draw(batch, delta)
         batch.end()
     }
 
@@ -82,15 +79,15 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
     override fun dispose() {
         batch.dispose()
         font.dispose()
-        playBtn.dispose()
-        dwarf.dispose()
-        background.dispose()
+        scene.dispose()
+        menu.dispose()
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         val worldCoordinates = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
-        Gdx.app.log("Mouse Event", "Projected at " + worldCoordinates.x + "," + worldCoordinates.y)
-        playBtn.onClick(worldCoordinates.x, worldCoordinates.y)
+        Gdx.app.log(TAG, "Click at " + worldCoordinates.x + "," + worldCoordinates.y)
+        scene.onClick(worldCoordinates.x, worldCoordinates.y)
+        menu.onClick(worldCoordinates.x, worldCoordinates.y)
         return false
     }
 
@@ -102,12 +99,13 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
     }
 
     private fun updateCamera() {
-        if (gameStarted && !cameraInitialised) {
+        if (currentState == State.IN_GAME && !cameraInitialised) {
             scaling += 0.001f
             camera.viewportWidth = camera.viewportWidth / (1 + scaling)
             camera.viewportHeight = camera.viewportHeight / (1 + scaling)
             camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2 + (80 * (scaling * 20.4081745106f)), 0f)
             if (camera.viewportWidth < 600) {
+                Gdx.app.log(TAG, "Camera initialisé ; width : ${camera.viewportWidth}, height : ${camera.viewportHeight}, position : ${camera.position}")
                 cameraInitialised = true
             }
         }

@@ -1,4 +1,4 @@
-package fr.clodo.arena.tools
+package fr.clodo.arena.helper
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
