@@ -13,7 +13,7 @@ import fr.clodo.arena.screens.GameScreen
 import java.util.*
 import kotlin.concurrent.timerTask
 
-class Menu(val gameScreen: GameScreen): Drawable, Clickable{
+class Menu(val gameScreen: GameScreen): Drawable(), Clickable{
     companion object {
         const val TAG = "Menu"
     }
@@ -22,7 +22,7 @@ class Menu(val gameScreen: GameScreen): Drawable, Clickable{
     private var playBtn = Button.createPlayButton(ClodoWorld.WORLD_WIDTH / 2f, ClodoWorld.WORLD_HEIGHT / 2f) {
         Timer().schedule(timerTask {
             Gdx.app.log(TAG, "Demarrage de la partie")
-            gameScreen.currentScreen = ClodoScreen.IN_GAME
+            ClodoWorld.currentScreen = ClodoScreen.IN_GAME_WAITING
         }, 1000)
     }
 

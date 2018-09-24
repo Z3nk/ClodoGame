@@ -6,16 +6,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.clodo.arena.base.Drawable
 
-class Background(spriteSheet: String) : Drawable {
+class Background(spriteSheet: String) : Drawable() {
     companion object {
         fun createNightBackground(): Background {
             return Background("background_night.png")
         }
     }
 
-    private val sprite: Sprite = Sprite(Texture(spriteSheet))
 
     init {
+        sprite = Sprite(Texture(spriteSheet))
         sprite.setSize(1927f, 1081f)
     }
 
@@ -23,7 +23,6 @@ class Background(spriteSheet: String) : Drawable {
     }
 
     override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
-        update(delta)
         sprite.draw(batch)
     }
 

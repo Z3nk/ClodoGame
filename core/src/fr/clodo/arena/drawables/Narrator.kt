@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import fr.clodo.arena.base.Clickable
 import fr.clodo.arena.base.Drawable
 
-class Narrator(): Drawable, Clickable{
+class Narrator(): Drawable(), Clickable{
     companion object {
         const val TAG = "Narrator"
     }

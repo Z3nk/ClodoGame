@@ -10,7 +10,7 @@ import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.helper.EntitiesAnimator
 import java.util.*
 
-class Button(val x: Float, val y: Float, spriteSheet: String, val width: Float, val height: Float, private val entitiesAnimator: EntitiesAnimator, private val callback: () -> Unit) : Drawable, Clickable {
+class Button(val x: Float, val y: Float, spriteSheet: String, val width: Float, val height: Float, private val entitiesAnimator: EntitiesAnimator, private val callback: () -> Unit) : Drawable(), Clickable {
 
     companion object {
         const val TAG = "Button"
@@ -26,11 +26,12 @@ class Button(val x: Float, val y: Float, spriteSheet: String, val width: Float, 
         }
     }
 
-    private val sprite: Sprite = Sprite(Texture(spriteSheet))
+
     private var isAnimed = false
     private var isAlive = true
 
     init {
+        sprite = Sprite(Texture(spriteSheet))
         sprite.setSize(width, height)
         sprite.setPosition(x, y)
     }

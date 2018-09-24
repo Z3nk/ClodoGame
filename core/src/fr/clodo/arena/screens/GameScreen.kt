@@ -7,12 +7,13 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import fr.clodo.arena.ClodoArenaGame
+import fr.clodo.arena.drawables.Dwarf
 import fr.clodo.arena.enums.ClodoScreen
-import fr.clodo.arena.enums.ClodoState
 import fr.clodo.arena.helper.ClodoWorld
 import fr.clodo.arena.helper.Preferences
 import fr.clodo.arena.virtual.Menu
@@ -34,13 +35,11 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
     private val menu = Menu(this)
     private val scene = Scene(this)
 
-    var currentState = ClodoState.TUTORIAL
-    var currentScreen = ClodoScreen.LOBBY
     var cameraInitialised = false
     private var scaling = 0f
 
     override fun show() {
-        currentState = if (Preferences.tutorialIsDone()) ClodoState.NORMAL else ClodoState.TUTORIAL
+        ClodoWorld.tutorialIsDone = Preferences.tutorialIsDone()
         batch = SpriteBatch()
         camera = OrthographicCamera()
         viewport = StretchViewport(ClodoWorld.WORLD_WIDTH.toFloat(), ClodoWorld.WORLD_HEIGHT.toFloat(), camera)
@@ -54,7 +53,7 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
     }
 
     private fun update(delta: Float) {
-        updateCamera()
+        updateCamera(delta)
         scene.update(delta)
         menu.update(delta)
     }
@@ -103,16 +102,22 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
         camera.position.set(ClodoWorld.lastPosition)
     }
 
-    private fun updateCamera() {
-        if (currentScreen == ClodoScreen.IN_GAME && !cameraInitialised) {
+    private fun updateCamera(delta: Float) {
+        if (ClodoWorld.currentScreen == ClodoScreen.IN_GAME_WAITING && !cameraInitialised) {
             scaling += 0.001f
             camera.viewportWidth = camera.viewportWidth / (1 + scaling)
             camera.viewportHeight = camera.viewportHeight / (1 + scaling)
             camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2 + (80 * (scaling * 20.4081745106f)), 0f)
             if (camera.viewportWidth < 600) {
                 Gdx.app.log(TAG, "Camera initialisé ; width : ${camera.viewportWidth}, height : ${camera.viewportHeight}, position : ${camera.position}")
+                ClodoWorld.currentScreen = ClodoScreen.IN_GAME_WALKING
                 cameraInitialised = true
             }
+        } else if (ClodoWorld.currentScreen == ClodoScreen.IN_GAME_WALKING) {
+            val fl = Dwarf.speedX * delta
+//            Gdx.app.log(TAG, "Camera avance a la vitesse de ${Dwarf.speedX} et un delta $delta pour un total de $fl")
+//            Gdx.app.log(TAG, "Position = ${camera.position.x + fl}")
+            camera.position.set(Vector2(camera.position.x + fl, camera.position.y), 0f)
         }
 
         camera.update()
