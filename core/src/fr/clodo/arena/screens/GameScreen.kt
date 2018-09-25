@@ -90,8 +90,9 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        Gdx.app.log(TAG, "Click at $screenX,$screenY")
         val worldCoordinates = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
-        Gdx.app.log(TAG, "Click at " + worldCoordinates.x + "," + worldCoordinates.y)
+        Gdx.app.log(TAG, "Unproject at " + worldCoordinates.x + "," + worldCoordinates.y)
         scene.onClick(worldCoordinates.x, worldCoordinates.y)
         menu.onClick(worldCoordinates.x, worldCoordinates.y)
         return false

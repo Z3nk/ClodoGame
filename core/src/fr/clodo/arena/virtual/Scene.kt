@@ -37,7 +37,7 @@ class Scene(val gameScreen: GameScreen) : Drawable(), Clickable {
         dwarf.update(delta)
         ennemies.forEach { it.update(delta) }
         //ui.update(delta)
-        Gdx.app.log(TAG, "Position unproject du current ennemie x : ${ennemies[ClodoWorld.currentLevel-1].sprite.x}: projeté x : " + gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel-1].sprite.x, ennemies[ClodoWorld.currentLevel-1].sprite.y), 0f)).toString())
+        //Gdx.app.log(TAG, "Position unproject du current ennemie x : ${ennemies[ClodoWorld.currentLevel-1].sprite.x}: projeté x : " + gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel-1].sprite.x, ennemies[ClodoWorld.currentLevel-1].sprite.y), 0f)).toString())
         if(isInFightWithNextBoss()){
             ClodoWorld.currentScreen = ClodoScreen.IN_GAME_FIGHTING
         }
