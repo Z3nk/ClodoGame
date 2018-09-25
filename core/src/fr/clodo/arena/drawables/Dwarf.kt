@@ -47,7 +47,7 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
         sprite.setSize(width, height)
     }
 
-    override fun update(delta: Float) {
+    override fun update(gameScreen: GameScreen, delta: Float) {
         stateTime += delta
         x = sprite.x
         y = sprite.y
@@ -86,7 +86,7 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
         }
     }
 
-    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
+    override fun draw(gameScreen: GameScreen, delta: Float) {
 
         when (state) {
             HeroState.IDLE -> {
@@ -103,7 +103,7 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
             }
         }
 
-        sprite.draw(batch)
+        sprite.draw(gameScreen.batch)
     }
 
     override fun dispose() {

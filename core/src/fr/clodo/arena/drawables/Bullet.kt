@@ -1,17 +1,17 @@
 package fr.clodo.arena.drawables
 
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.enums.BulletType
+import fr.clodo.arena.screens.GameScreen
+import java.util.*
 
-class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Drawable(x = x, y = y) {
+class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Drawable(x = x, y = y, width = sizeX, height = sizeY) {
     companion object {
 
-        private const val sizeX = 64f
-        private const val sizeY = 64f
+        private const val sizeX = 32f
+        private const val sizeY = 32f
         fun createAttackBullet(x: Float, y: Float, speedX: Float): Bullet {
             return Bullet(x, y, speedX, BulletType.ATTACK)
         }
@@ -24,6 +24,8 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
             return Bullet(x, y, speedX, BulletType.BOMB)
         }
     }
+
+    private val id: UUID = UUID.randomUUID()
 
     init {
         sprite = Sprite(Texture(getTextureOf(type)))
@@ -41,16 +43,23 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
         }
     }
 
-    override fun update(delta: Float) {
+    override fun update(gameScreen: GameScreen, delta: Float) {
         x += (speedX * delta)
         sprite.setPosition(x, y)
     }
 
-    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
-        sprite.draw(batch)
+    override fun draw(gameScreen: GameScreen, delta: Float) {
+        sprite.draw(gameScreen.batch)
     }
 
     override fun dispose() {
     }
 
+    override fun equals(other: Any?): Boolean {
+        return id == (other as Bullet).id
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
 }

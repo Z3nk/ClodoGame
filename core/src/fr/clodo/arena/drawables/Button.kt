@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.clodo.arena.base.Clickable
 import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.helper.EntitiesAnimator
+import fr.clodo.arena.screens.GameScreen
 import java.util.*
 
 class Button(x: Float, y: Float, spriteSheet: String, width: Float, height: Float, private val entitiesAnimator: EntitiesAnimator, private val callback: () -> Unit) : Drawable(x = x, y = y, width = width, spriteSheet = spriteSheet, height = height), Clickable {
@@ -44,7 +45,7 @@ class Button(x: Float, y: Float, spriteSheet: String, width: Float, height: Floa
     }
 
 
-    override fun update(delta: Float) {
+    override fun update(gameScreen: GameScreen, delta: Float) {
         if (isAnimed && isAlive) {
             val movement = entitiesAnimator.getMovement(delta)
             if (movement == null) {
@@ -56,9 +57,9 @@ class Button(x: Float, y: Float, spriteSheet: String, width: Float, height: Floa
         }
     }
 
-    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
+    override fun draw(gameScreen: GameScreen, delta: Float) {
         if (isAlive) {
-            sprite.draw(batch)
+            sprite.draw(gameScreen.batch)
         }
     }
 

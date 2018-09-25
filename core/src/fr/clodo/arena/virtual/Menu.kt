@@ -26,13 +26,13 @@ class Menu(val gameScreen: GameScreen): Drawable(), Clickable{
         }, 1000)
     }
 
-    override fun update(delta: Float) {
-        playBtn.update(delta)
+    override fun update(gameScreen: GameScreen, delta: Float) {
+        playBtn.update(gameScreen, delta)
 
     }
 
-    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
-        playBtn.draw(batch, font, delta)
+    override fun draw(gameScreen: GameScreen, delta: Float) {
+        playBtn.draw(gameScreen, delta)
     }
 
     override fun dispose() {

@@ -53,19 +53,19 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
         initCamera()
     }
 
-    private fun update(delta: Float) {
+    private fun update(gameScreen: GameScreen, delta: Float) {
         updateCamera(delta)
-        scene.update(delta)
-        menu.update(delta)
+        scene.update(gameScreen, delta)
+        menu.update(gameScreen, delta)
     }
 
     override fun render(delta: Float) {
-        update(delta)
+        update(this, delta)
         batch.begin()
-        scene.draw(batch, font, delta)
-        menu.draw(batch, font, delta)
+        scene.draw(this, delta)
+        menu.draw(this, delta)
         batch.end()
-       UI(this).draw(batch, font, delta)
+        UI().draw(this, delta)
     }
 
     override fun pause() {
