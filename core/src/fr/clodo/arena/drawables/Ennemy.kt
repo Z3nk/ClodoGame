@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.*
 import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.helper.Animator
 
-class Ennemy(val walkingAnimation: Animation<TextureRegion>, val level: Int, startX: Float, startY: Float) : Drawable() {
+class Ennemy(private val walkingAnimation: Animation<TextureRegion>, val level: Int, startX: Float, startY: Float) : Drawable(x = startX, y = startY, width = sizeX, height = sizeY) {
 
     companion object {
         fun createEnnemy(level: Int, startX: Float, startY: Float): Ennemy {
@@ -22,8 +22,8 @@ class Ennemy(val walkingAnimation: Animation<TextureRegion>, val level: Int, sta
     private var stateTime: Float = 0f
 
     init {
-        sprite.setPosition(startX, startY)
-        sprite.setSize(sizeX, sizeY)
+        sprite.setPosition(x, y)
+        sprite.setSize(width, height)
     }
 
     override fun update(delta: Float) {

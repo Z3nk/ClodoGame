@@ -115,8 +115,6 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
             }
         } else if (ClodoWorld.currentScreen == ClodoScreen.IN_GAME_WALKING) {
             val fl = Dwarf.speedX * delta
-//            Gdx.app.log(TAG, "Camera avance a la vitesse de ${Dwarf.speedX} et un delta $delta pour un total de $fl")
-//            Gdx.app.log(TAG, "Position = ${camera.position.x + fl}")
             camera.position.set(Vector2(camera.position.x + fl, camera.position.y), 0f)
         }
 

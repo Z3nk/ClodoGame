@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.clodo.arena.base.Drawable
 
-class Background(spriteSheet: String) : Drawable() {
+class Background(spriteSheet: String) : Drawable(x = 0f, y = 0f, width = 1927f, height = 1081f, spriteSheet = spriteSheet) {
     companion object {
         fun createNightBackground(): Background {
             return Background("background_night.png")
@@ -16,7 +16,7 @@ class Background(spriteSheet: String) : Drawable() {
 
     init {
         sprite = Sprite(Texture(spriteSheet))
-        sprite.setSize(1927f, 1081f)
+        sprite.setSize(width, height)
     }
 
     override fun update(delta: Float) {

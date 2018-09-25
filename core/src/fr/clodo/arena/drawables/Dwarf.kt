@@ -2,13 +2,18 @@ package fr.clodo.arena.drawables
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.*
+import fr.clodo.arena.base.Clickable
 import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.enums.ClodoScreen
+import fr.clodo.arena.enums.HeroState
 import fr.clodo.arena.helper.Animator
 import fr.clodo.arena.helper.ClodoWorld
 import fr.clodo.arena.screens.GameScreen
+import fr.clodo.arena.virtual.Menu
+import java.util.*
+import kotlin.concurrent.timerTask
 
-class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation: Animation<TextureRegion>, val attackingAnimation: Animation<TextureRegion>) : Drawable() {
+class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation: Animation<TextureRegion>, val attackingAnimation: Animation<TextureRegion>) : Drawable(x = startX, y = startY, width = sizeX, height = sizeY), Clickable {
 
     companion object {
         const val TAG = "Dwarf"
@@ -30,56 +35,70 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
         private fun getIdleAnimation() = Animation(frameDuration, getIdleTexture(), Animation.PlayMode.LOOP)
         private fun getIdleTexture() = Animator.generateArray("spritesheet_idle.png", 0, 0, 0, 4, 50, 72, 202, 72)
 
-        private fun getAttackAnimation() = Animation(frameDuration, getAttackTexture(), Animation.PlayMode.LOOP)
+        private fun getAttackAnimation() = Animation(frameDuration, getAttackTexture(), Animation.PlayMode.NORMAL)
         private fun getAttackTexture() = Animator.generateArray("spritesheet_attack.png", 0, 0, 0, 4, 100, 62, 400, 62)
     }
 
     private var stateTime: Float = 0f
+    private var state = HeroState.IDLE
 
     init {
-        sprite.setPosition(startX, startY)
-        sprite.setSize(sizeX, sizeY)
+        sprite.setPosition(x, y)
+        sprite.setSize(width, height)
     }
 
     override fun update(delta: Float) {
         stateTime += delta
+        x = sprite.x
+        y = sprite.y
         when (ClodoWorld.currentScreen) {
             ClodoScreen.LOBBY -> {
+                state = HeroState.IDLE
             }
             ClodoScreen.IN_GAME_WAITING -> {
+                state = HeroState.IDLE
             }
             ClodoScreen.IN_GAME_WALKING -> {
-                val fl = speedX * delta
-                sprite.setPosition(sprite.x + fl, sprite.y)
-//                Gdx.app.log(TAG, "Dwarf avance a la vitesse de $speedX et un delta $delta pour un total de $fl")
-//                Gdx.app.log(TAG, "Position = ${sprite.x + fl}")
+                state = HeroState.RUN
+                x += (speedX * delta)
+                sprite.setPosition(x, y)
             }
             ClodoScreen.IN_GAME_FIGHTING -> {
+                if (state == HeroState.ATTACK && attackingAnimation.isAnimationFinished(stateTime)) {
+                    state = HeroState.IDLE
+                } else if (state == HeroState.DEAD) {
+                    //TODO
+                } else if (state == HeroState.RUN) {
+                    state = HeroState.IDLE
+                }
             }
             ClodoScreen.DEAD -> {
+                state = HeroState.DEAD
             }
         }
     }
 
-    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
-        when (ClodoWorld.currentScreen) {
 
-            ClodoScreen.LOBBY -> {
-                //TODO
+    override fun onClick(x: Float, y: Float) {
+        if (isClickOnMe(x, y)) {
+            stateTime = 0.0f
+            state = HeroState.ATTACK
+        }
+    }
+
+    override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
+
+        when (state) {
+            HeroState.IDLE -> {
                 sprite.setRegion(idleingAnimation.getKeyFrame(stateTime))
             }
-            ClodoScreen.IN_GAME_WAITING -> {
-                sprite.setRegion(idleingAnimation.getKeyFrame(stateTime))
-            }
-            ClodoScreen.IN_GAME_WALKING -> {
+            HeroState.RUN -> {
                 sprite.setRegion(walkingAnimation.getKeyFrame(stateTime))
             }
-            ClodoScreen.IN_GAME_FIGHTING -> {
-                //TODO
-                sprite.setRegion(idleingAnimation.getKeyFrame(stateTime))
+            HeroState.ATTACK -> {
+                sprite.setRegion(attackingAnimation.getKeyFrame(stateTime))
             }
-            ClodoScreen.DEAD -> {
-                //TODO
+            HeroState.DEAD -> {
                 sprite.setRegion(idleingAnimation.getKeyFrame(stateTime))
             }
         }

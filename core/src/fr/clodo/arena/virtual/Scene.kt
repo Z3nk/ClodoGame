@@ -53,7 +53,7 @@ class Scene(val gameScreen: GameScreen) : Drawable(), Clickable {
     }
 
     override fun onClick(x: Float, y: Float) {
-
+        dwarf.onClick(x, y)
     }
 
 }
