@@ -10,6 +10,7 @@ import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.drawables.Background
 import fr.clodo.arena.drawables.Dwarf
 import fr.clodo.arena.drawables.Ennemy
+import fr.clodo.arena.drawables.UI
 import fr.clodo.arena.enums.ClodoScreen
 import fr.clodo.arena.helper.ClodoWorld
 import fr.clodo.arena.screens.GameScreen
@@ -21,6 +22,7 @@ class Scene(val gameScreen: GameScreen) : Drawable(), Clickable {
 
     private val background = Background.createNightBackground()
     private val dwarf = Dwarf.createDwarf()
+    //private val ui = UI(gameScreen)
     var ennemies = mutableListOf<Drawable>()
 
 
@@ -34,22 +36,27 @@ class Scene(val gameScreen: GameScreen) : Drawable(), Clickable {
         background.update(delta)
         dwarf.update(delta)
         ennemies.forEach { it.update(delta) }
+        //ui.update(delta)
         Gdx.app.log(TAG, "Position unproject du current ennemie x : ${ennemies[ClodoWorld.currentLevel-1].sprite.x}: projeté x : " + gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel-1].sprite.x, ennemies[ClodoWorld.currentLevel-1].sprite.y), 0f)).toString())
-        if(ClodoWorld.currentScreen == ClodoScreen.IN_GAME_WALKING && gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel-1].sprite.x, ennemies[ClodoWorld.currentLevel-1].sprite.y), 0f)).x < 1920 - 250){
+        if(isInFightWithNextBoss()){
             ClodoWorld.currentScreen = ClodoScreen.IN_GAME_FIGHTING
         }
     }
+
+    private fun isInFightWithNextBoss() = ClodoWorld.currentScreen == ClodoScreen.IN_GAME_WALKING && gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel - 1].sprite.x, ennemies[ClodoWorld.currentLevel - 1].sprite.y), 0f)).x < 1920 - 250
 
     override fun draw(batch: SpriteBatch, font: BitmapFont, delta: Float) {
         background.draw(batch, font, delta)
         dwarf.draw(batch, font, delta)
         ennemies.forEach { it.draw(batch, font, delta) }
+        //ui.draw(batch, font, delta)
     }
 
     override fun dispose() {
         dwarf.dispose()
         background.dispose()
         ennemies.forEach { it.dispose() }
+        //ui.dispose()
     }
 
     override fun onClick(x: Float, y: Float) {

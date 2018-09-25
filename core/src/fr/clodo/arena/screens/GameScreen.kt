@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import fr.clodo.arena.ClodoArenaGame
 import fr.clodo.arena.drawables.Dwarf
+import fr.clodo.arena.drawables.UI
 import fr.clodo.arena.enums.ClodoScreen
 import fr.clodo.arena.helper.ClodoWorld
 import fr.clodo.arena.helper.Preferences
@@ -64,6 +65,7 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
         scene.draw(batch, font, delta)
         menu.draw(batch, font, delta)
         batch.end()
+       UI(this).draw(batch, font, delta)
     }
 
     override fun pause() {

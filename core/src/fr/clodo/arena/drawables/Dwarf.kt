@@ -29,7 +29,7 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
         const val speedX = 300f
 
         private fun getWalkAnimation() = Animation(frameDuration, getWalkTexture(), Animation.PlayMode.LOOP)
-        private fun getWalkTexture() = Animator.generateArray("spritesheet.png", 0, 2, 0, 1, 68, 67, 202, 198)
+        private fun getWalkTexture() = Animator.generateArray("spritesheet.png", 0, 2, 0, 1, 67, 66, 202, 198)
         //private fun getWalkTexture() = Animator.generateArray("Nain.png", 0, 0, 0, 11, 128, 128, 1408, 128)
 
         private fun getIdleAnimation() = Animation(frameDuration, getIdleTexture(), Animation.PlayMode.LOOP)

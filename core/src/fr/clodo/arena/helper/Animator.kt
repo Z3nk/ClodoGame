@@ -14,19 +14,14 @@ abstract class Animator {
             val tmp = TextureRegion.split(Texture(spriteSheet), frameX, frameY)
 
 
-            var currentRow = startRow //3
-            var currentCol = startCol //2
+            var currentRow = startRow
+            var currentCol = startCol
             var list = Array<TextureRegion>()
             //  4 1
             while (currentRow < endRow || currentCol < endCol) {
-                try {
-                    list.add(tmp[currentRow][currentCol])
-                } catch (e: Exception) {
-                    var i = 2
-                }
+                list.add(tmp[currentRow][currentCol])
                 currentCol++
                 if (currentRow == endRow && currentCol == endCol) {
-                    Gdx.app.error(TAG, "Done")
                     return list
                 }
                 if (currentCol >= tmp[currentRow].size) {
