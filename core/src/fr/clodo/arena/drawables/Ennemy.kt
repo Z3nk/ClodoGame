@@ -5,19 +5,20 @@ import com.badlogic.gdx.graphics.g2d.*
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import fr.clodo.arena.base.Drawable
+import fr.clodo.arena.enums.BulletType
 import fr.clodo.arena.enums.ClodoScreen
-import fr.clodo.arena.enums.HeroState
+import fr.clodo.arena.enums.CharacterState
 import fr.clodo.arena.helper.Animator
 import fr.clodo.arena.helper.BulletAnimator
 import fr.clodo.arena.helper.ClodoWorld
+import fr.clodo.arena.helper.LevelGenerator
 import fr.clodo.arena.screens.GameScreen
-import java.util.*
 
-class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val attackingAnimation: Animation<TextureRegion>, val level: Int, startX: Float, startY: Float) : Drawable(x = startX, y = startY, width = sizeX, height = sizeY) {
+class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val attackingAnimation: Animation<TextureRegion>, private val hitAnimation: Animation<TextureRegion>, val level: Int, startX: Float, startY: Float, private val hasHitDwarf: () -> Unit) : Drawable(x = startX, y = startY, width = sizeX, height = sizeY) {
 
     companion object {
-        fun createEnnemy(level: Int, startX: Float, startY: Float): Ennemy {
-            return Ennemy(getIdleAnimation(), getAttackAnimation(), level, startX, startY)
+        fun createEnnemy(level: Int, startX: Float, startY: Float, hasHitDwarf: () -> Unit): Ennemy {
+            return Ennemy(getIdleAnimation(), getAttackAnimation(), getHitAnimation(), level, startX, startY, hasHitDwarf)
         }
 
         private const val frameIdleDuration = 0.15f
@@ -30,64 +31,89 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
 
         private fun getAttackAnimation() = Animation(frameAttackDuration, getAttackTexture(), Animation.PlayMode.LOOP_REVERSED)
         private fun getAttackTexture() = Animator.generateArray("skeleton_attack.png", 0, 0, 0, 18, 43, 37, 774, 37)
+
+        private fun getHitAnimation() = Animation(frameAttackDuration, getHitTexture(), Animation.PlayMode.LOOP_REVERSED)
+        private fun getHitTexture() = Animator.generateArray("skeleton_hit.png", 0, 0, 0, 8, 30, 32, 240, 32)
     }
 
-    private var bulletGenerator: BulletAnimator
+    private var bulletGenerator: BulletAnimator? = null
     private var bullets = mutableListOf<Bullet>()
     private var alive = true
     private var stateTime: Float = 0f
-    private var state = HeroState.IDLE
+    private var state = CharacterState.IDLE
+    private var health: Int = 20
 
     init {
         sprite.setPosition(x, y)
         sprite.setSize(width, height)
-        bulletGenerator = getBulletGenerator(x, y)
-
+        getBulletGenerator(x, y) {
+            bulletGenerator = it
+        }
+        health = 20 * level
     }
 
     override fun update(gameScreen: GameScreen, delta: Float) {
         stateTime += delta
 
         if (isFightingAndAliveAndOnScreen(gameScreen.camera)) {
-            if (state == HeroState.ATTACK && attackingAnimation.isAnimationFinished(stateTime)) {
-                state = HeroState.IDLE
+            if ((state == CharacterState.ATTACK && attackingAnimation.isAnimationFinished(stateTime)) || (state == CharacterState.HIT && hitAnimation.isAnimationFinished(stateTime))) {
+                state = CharacterState.IDLE
                 stateTime = 0.0f
             }
-            (haveNewBulletToThrow(delta))?.let {
-                if (state != HeroState.ATTACK) {
-                    state = HeroState.ATTACK
-                    stateTime = 0.0f
+            if (state != CharacterState.HIT) {
+                (haveNewBulletToThrow(delta))?.let {
+                    if (state != CharacterState.ATTACK) {
+                        state = CharacterState.ATTACK
+                        stateTime = 0.0f
+                    }
+                    bullets.add(it)
                 }
-                bullets.add(it)
             }
-            bullets.forEach { it.update(gameScreen, delta) }
+
+
+            var bulletsTmp = mutableListOf<Bullet>()
+            bullets.forEach {
+                it.update(gameScreen, delta)
+                if (it.isAlive) {
+                    bulletsTmp.add(it)
+                }
+                if(it.haveHitten){
+                    hasHitDwarf()
+                }
+            }
+            bullets = bulletsTmp
         }
 
 
     }
 
     private fun haveNewBulletToThrow(delta: Float): Bullet? {
-        val bullet = bulletGenerator.getBullet(delta)?:return null
+        val bullet = bulletGenerator?.getBullet(delta) ?: return null
         return if (!bullets.contains(bullet)) bullet else null
     }
 
     override fun draw(gameScreen: GameScreen, delta: Float) {
 
         when (state) {
-            HeroState.IDLE -> {
+            CharacterState.IDLE -> {
                 sprite.setRegion(idleAnimation.getKeyFrame(stateTime))
             }
-            HeroState.RUN -> {
+            CharacterState.RUN -> {
                 // NOT POSSIBLE
             }
-            HeroState.ATTACK -> {
+            CharacterState.HIT -> {
+                sprite.setRegion(hitAnimation.getKeyFrame(stateTime))
+            }
+            CharacterState.ATTACK -> {
                 sprite.setRegion(attackingAnimation.getKeyFrame(stateTime))
             }
-            HeroState.DEAD -> TODO()
+            CharacterState.DEAD -> TODO()
         }
 
         sprite.draw(gameScreen.batch)
-        bullets.forEach { it.draw(gameScreen, delta) }
+        bullets.forEach {
+            it.draw(gameScreen, delta)
+        }
     }
 
     override fun dispose() {
@@ -95,17 +121,32 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
         bullets.forEach { it.dispose() }
     }
 
-    private fun getBulletGenerator(x: Float, y: Float): BulletAnimator {
-        val list = LinkedList<Pair<Float, Bullet>>()
-        val v1 = Vector3(Vector2(x, y), 0f)
-        val v2 = Vector3(Vector2(x, y), 0f)
-        list.add(Pair(3f, Bullet.createAttackBullet(v1.x, v1.y, -100f)))
-        list.add(Pair(3f, Bullet.createBombBullet(v2.x, v2.y, -150f)))
-        list.add(Pair(2f, Bullet.createShieldBullet(v2.x, v2.y, -200f)))
-        return BulletAnimator(list)
+    private fun getBulletGenerator(x: Float, y: Float, function: (mBulletAnimator: BulletAnimator) -> Unit): Unit {
+        LevelGenerator.generateLevel(level, x, y) {
+            function(BulletAnimator(it))
+        }
     }
 
     private fun isFightingAndAliveAndOnScreen(camera: Camera): Boolean = ClodoWorld.currentScreen == ClodoScreen.IN_GAME_FIGHTING && isAliveAndOnScreen(camera)
     private fun isAliveAndOnScreen(camera: Camera): Boolean = alive && camera.project(Vector3(Vector2(x, y), 0f)).x < 1920 - width
+    fun onClick(x: Float, y: Float, callback: (mBulletType: BulletType) -> Unit) {
+        bullets.forEach {
+            it.onClick(x, y) {
+                when (it) {
+                    BulletType.BOMB -> {
+                        callback(it)
+                    }
+                    BulletType.SHIELD -> {
+
+                    }
+                    BulletType.ATTACK -> {
+                        state = CharacterState.HIT
+                        stateTime = 0.0f
+                        health -= 20
+                    }
+                }
+            }
+        }
+    }
 
 }

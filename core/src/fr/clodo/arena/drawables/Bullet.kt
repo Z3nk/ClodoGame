@@ -1,5 +1,6 @@
 package fr.clodo.arena.drawables
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import fr.clodo.arena.base.Drawable
@@ -9,7 +10,9 @@ import java.util.*
 
 class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Drawable(x = x, y = y, width = sizeX, height = sizeY) {
     companion object {
-
+        private var attackTexture = Texture("icon_attack.png")
+        private var bombTexture = Texture("icon_bomb.png")
+        private var shieldTexture = Texture("icon_def.png")
         private const val sizeX = 32f
         private const val sizeY = 32f
         fun createAttackBullet(x: Float, y: Float, speedX: Float): Bullet {
@@ -25,27 +28,32 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
         }
     }
 
+
+    var isAlive: Boolean = true
+    var haveHitten: Boolean = false
     private val id: UUID = UUID.randomUUID()
 
     init {
-        sprite = Sprite(Texture(getTextureOf(type)))
+        sprite = Sprite(getTextureOf(type))
         sprite.setSize(width, height)
         sprite.setPosition(x, y)
     }
 
-    private fun getTextureOf(type: BulletType): String {
-        return if (type == BulletType.ATTACK) {
-            "icon_attack.png"
-        } else if (type == BulletType.SHIELD) {
-            "icon_def.png"
-        } else {
-            "icon_bomb.png"
+    private fun getTextureOf(type: BulletType): Texture {
+        return when (type) {
+            BulletType.ATTACK -> attackTexture
+            BulletType.SHIELD -> shieldTexture
+            else -> bombTexture
         }
     }
 
     override fun update(gameScreen: GameScreen, delta: Float) {
         x += (speedX * delta)
         sprite.setPosition(x, y)
+        if (x + width < UI.getUnprojectX(gameScreen)) {
+            haveHitten = true
+            isAlive = false
+        }
     }
 
     override fun draw(gameScreen: GameScreen, delta: Float) {
@@ -61,5 +69,13 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
 
     override fun hashCode(): Int {
         return super.hashCode()
+    }
+
+    fun onClick(x: Float, y: Float, callback: (mBulletType: BulletType) -> Unit) {
+        Gdx.app.log("Bullet", "$x $y  <=> " + this.x + " " + this.y)
+        if (isClickOnMe(x, y)) {
+            isAlive = false
+            callback(type)
+        }
     }
 }

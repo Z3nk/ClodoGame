@@ -35,6 +35,7 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
 
     private val menu = Menu()
     private val scene = Scene()
+    private val ui = UI()
 
     var cameraInitialised = false
     private var scaling = 0f
@@ -65,7 +66,7 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
         scene.draw(this, delta)
         menu.draw(this, delta)
         batch.end()
-        UI().draw(this, delta)
+        ui.draw(this, delta)
     }
 
     override fun pause() {
@@ -93,7 +94,7 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
         Gdx.app.log(TAG, "Click at $screenX,$screenY")
         val worldCoordinates = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
         Gdx.app.log(TAG, "Unproject at " + worldCoordinates.x + "," + worldCoordinates.y)
-        scene.onClick(worldCoordinates.x, worldCoordinates.y)
+        scene.onClick(ui.x, ui.y)
         menu.onClick(worldCoordinates.x, worldCoordinates.y)
         return false
     }

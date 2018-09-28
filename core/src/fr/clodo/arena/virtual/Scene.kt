@@ -1,17 +1,14 @@
 package fr.clodo.arena.virtual
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import fr.clodo.arena.base.Clickable
 import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.drawables.*
+import fr.clodo.arena.enums.BulletType
 import fr.clodo.arena.enums.ClodoScreen
-import fr.clodo.arena.helper.BulletAnimator
 import fr.clodo.arena.helper.ClodoWorld
 import fr.clodo.arena.screens.GameScreen
-import java.util.*
 
 class Scene() : Drawable(), Clickable {
     companion object {
@@ -26,7 +23,9 @@ class Scene() : Drawable(), Clickable {
 
     init {
         for (i in 1..10) {
-            ennemies.add(Ennemy.createEnnemy(i, i * 600f, 120f))
+            ennemies.add(Ennemy.createEnnemy(i, i * 600f, 120f){
+                dwarf.isHit()
+            })
         }
     }
 
@@ -59,6 +58,19 @@ class Scene() : Drawable(), Clickable {
 
     override fun onClick(x: Float, y: Float) {
         dwarf.onClick(x, y)
+        ennemies[ClodoWorld.currentLevel - 1].onClick(x, y){
+            when(it){
+                BulletType.BOMB -> {
+                    dwarf.isHit()
+                }
+                BulletType.SHIELD -> {
+
+                }
+                BulletType.ATTACK -> {
+
+                }
+            }
+        }
     }
 
 }
