@@ -13,7 +13,7 @@ import fr.clodo.arena.helper.ClodoWorld
 import fr.clodo.arena.screens.GameScreen
 import java.util.*
 
-class Scene(val gameScreen: GameScreen) : Drawable(), Clickable {
+class Scene() : Drawable(), Clickable {
     companion object {
         const val TAG = "Scene"
     }
@@ -36,12 +36,12 @@ class Scene(val gameScreen: GameScreen) : Drawable(), Clickable {
         ennemies.forEach { it.update(gameScreen, delta) }
         //ui.update(gameScreen, delta)
         //Gdx.app.log(TAG, "Position unproject du current ennemie x : ${ennemies[ClodoWorld.currentLevel-1].sprite.x}: projeté x : " + gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel-1].sprite.x, ennemies[ClodoWorld.currentLevel-1].sprite.y), 0f)).toString())
-        if (ClodoWorld.currentScreen == ClodoScreen.IN_GAME_WALKING && haveWalkedToNextBoss()) {
+        if (ClodoWorld.currentScreen == ClodoScreen.IN_GAME_WALKING && haveWalkedToNextBoss(gameScreen)) {
             ClodoWorld.currentScreen = ClodoScreen.IN_GAME_FIGHTING
         }
     }
 
-    private fun haveWalkedToNextBoss() = gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel - 1].sprite.x, ennemies[ClodoWorld.currentLevel - 1].sprite.y), 0f)).x < 1920 - 250
+    private fun haveWalkedToNextBoss(gameScreen: GameScreen) = gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel - 1].sprite.x, ennemies[ClodoWorld.currentLevel - 1].sprite.y), 0f)).x < 1920 - 250
 
     override fun draw(gameScreen: GameScreen, delta: Float) {
         background.draw(gameScreen, delta)

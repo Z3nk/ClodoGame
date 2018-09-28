@@ -13,7 +13,7 @@ import fr.clodo.arena.screens.GameScreen
 import java.util.*
 import kotlin.concurrent.timerTask
 
-class Menu(val gameScreen: GameScreen): Drawable(), Clickable{
+class Menu: Drawable(), Clickable{
     companion object {
         const val TAG = "Menu"
     }

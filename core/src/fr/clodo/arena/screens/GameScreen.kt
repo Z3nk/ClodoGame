@@ -33,8 +33,8 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
     lateinit var viewport: Viewport
 
 
-    private val menu = Menu(this)
-    private val scene = Scene(this)
+    private val menu = Menu()
+    private val scene = Scene()
 
     var cameraInitialised = false
     private var scaling = 0f
@@ -53,14 +53,14 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
         initCamera()
     }
 
-    private fun update(gameScreen: GameScreen, delta: Float) {
+    private fun update(delta: Float) {
         updateCamera(delta)
-        scene.update(gameScreen, delta)
-        menu.update(gameScreen, delta)
+        scene.update(this, delta)
+        menu.update(this, delta)
     }
 
     override fun render(delta: Float) {
-        update(this, delta)
+        update(delta)
         batch.begin()
         scene.draw(this, delta)
         menu.draw(this, delta)

@@ -53,26 +53,32 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
         y = sprite.y
         when (ClodoWorld.currentScreen) {
             ClodoScreen.LOBBY -> {
+                stateTime = 0.0f
                 state = HeroState.IDLE
             }
             ClodoScreen.IN_GAME_WAITING -> {
+                stateTime = 0.0f
                 state = HeroState.IDLE
             }
             ClodoScreen.IN_GAME_WALKING -> {
+                stateTime = 0.0f
                 state = HeroState.RUN
                 x += (speedX * delta)
                 sprite.setPosition(x, y)
             }
             ClodoScreen.IN_GAME_FIGHTING -> {
                 if (state == HeroState.ATTACK && attackingAnimation.isAnimationFinished(stateTime)) {
+                    stateTime = 0.0f
                     state = HeroState.IDLE
                 } else if (state == HeroState.DEAD) {
                     //TODO
                 } else if (state == HeroState.RUN) {
+                    stateTime = 0.0f
                     state = HeroState.IDLE
                 }
             }
             ClodoScreen.DEAD -> {
+                stateTime = 0.0f
                 state = HeroState.DEAD
             }
         }
