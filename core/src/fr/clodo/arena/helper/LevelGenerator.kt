@@ -41,13 +41,13 @@ object LevelGenerator {
     }
 
     private fun getRandomBulletType(): BulletType {
-        var r = random.nextInt(3)
-        return if (r == 0) BulletType.ATTACK
+        var r = random.nextInt(2)
+        return if (r == 0) BulletType.LEFT
         else {
             if (r == 1) {
-                BulletType.BOMB
+                BulletType.RIGHT
             } else {
-                BulletType.SHIELD
+                BulletType.LEFT
             }
         }
     }

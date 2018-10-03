@@ -22,7 +22,7 @@ class Scene() : Drawable(), Clickable {
 
 
     init {
-        for (i in 1..10) {
+        for (i in 1..2) {
             ennemies.add(Ennemy.createEnnemy(i, i * 600f, 120f){
                 dwarf.isHit()
             })
@@ -61,7 +61,6 @@ class Scene() : Drawable(), Clickable {
         ennemies[ClodoWorld.currentLevel - 1].onClick(x, y){
             when(it){
                 BulletType.BOMB -> {
-                    dwarf.isHit()
                 }
                 BulletType.SHIELD -> {
 

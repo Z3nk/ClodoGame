@@ -77,7 +77,7 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
                 if (it.isAlive) {
                     bulletsTmp.add(it)
                 }
-                if(it.haveHitten){
+                if (it.haveHitten) {
                     hasHitDwarf()
                 }
             }
@@ -143,6 +143,25 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
                         state = CharacterState.HIT
                         stateTime = 0.0f
                         health -= 20
+                    }
+                    BulletType.LEFT -> {
+                        if (ClodoWorld.hasClickedRight) {
+                            hasHitDwarf()
+                        } else {
+                            state = CharacterState.HIT
+                            stateTime = 0.0f
+                            health -= 20
+                        }
+
+                    }
+                    BulletType.RIGHT -> {
+                        if (ClodoWorld.hasClickedRight) {
+                            state = CharacterState.HIT
+                            stateTime = 0.0f
+                            health -= 20
+                        } else {
+                            hasHitDwarf()
+                        }
                     }
                 }
             }

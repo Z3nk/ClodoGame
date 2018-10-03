@@ -14,5 +14,6 @@ abstract class ClodoWorld {
         var currentLevel = 1
         var tutorialIsDone = false
         var currentScreen = ClodoScreen.LOBBY
+        var hasClickedRight = false
     }
 }
