@@ -1,5 +1,6 @@
 package fr.clodo.arena.drawables
 
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.*
 import fr.clodo.arena.base.Clickable
 import fr.clodo.arena.base.Drawable
@@ -24,19 +25,24 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
         private const val startY = 100f
         const val speedX = 300f
 
+        private val walkTexture = Texture("spritesheet.png")
+        private val idleTexture = Texture("spritesheet_idle.png")
+        private val hitTexture = Texture("spritesheet_hit.png")
+        private val attackTexture = Texture("spritesheet_attack.png")
+
         private fun getWalkAnimation() = Animation(frameDuration, getWalkTexture(), Animation.PlayMode.LOOP)
-        private fun getWalkTexture() = Animator.generateArray("spritesheet.png", 0, 2, 0, 1, 67, 66, 202, 198)
+        private fun getWalkTexture() = Animator.generateArray(walkTexture, 0, 2, 0, 1, 67, 66, 202, 198)
         //private fun getWalkTexture() = Animator.generateArray("Nain.png", 0, 0, 0, 11, 128, 128, 1408, 128)
 
         private fun getIdleAnimation() = Animation(frameDuration, getIdleTexture(), Animation.PlayMode.LOOP)
-        private fun getIdleTexture() = Animator.generateArray("spritesheet_idle.png", 0, 0, 0, 4, 50, 72, 202, 72)
+        private fun getIdleTexture() = Animator.generateArray(idleTexture, 0, 0, 0, 4, 50, 72, 202, 72)
         //private fun getWalkTexture() = Animator.generateArray("Nain.png", 0, 0, 0, 11, 128, 128, 1408, 128)
 
         private fun getHitAnimation() = Animation(frameDuration, getHitTexture(), Animation.PlayMode.LOOP)
-        private fun getHitTexture() = Animator.generateArray("spritesheet_hit.png", 0, 0, 0, 4, 50, 72, 202, 72)
+        private fun getHitTexture() = Animator.generateArray(hitTexture, 0, 0, 0, 4, 50, 72, 202, 72)
 
         private fun getAttackAnimation() = Animation(frameDuration, getAttackTexture(), Animation.PlayMode.NORMAL)
-        private fun getAttackTexture() = Animator.generateArray("spritesheet_attack.png", 0, 0, 0, 4, 100, 62, 400, 62)
+        private fun getAttackTexture() = Animator.generateArray(attackTexture, 0, 0, 0, 4, 100, 62, 400, 62)
     }
 
     private var stateTime: Float = 0f

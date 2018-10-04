@@ -10,13 +10,18 @@ import java.util.*
 
 class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Drawable(x = x, y = y, width = sizeX, height = sizeY) {
     companion object {
-//        private var attackTexture = Texture("icon_attack.png")
+        //        private var attackTexture = Texture("icon_attack.png")
 //        private var bombTexture = Texture("icon_bomb.png")
 //        private var shieldTexture = Texture("icon_def.png")
+        private var goldTexture = Texture("icon_gold.png")
         private var rightTexture = Texture("icon_right.png")
         private var leftTexture = Texture("icon_left.png")
         private const val sizeX = 32f
         private const val sizeY = 32f
+        fun createGoldBullet(x: Float, y: Float, speedX: Float): Bullet {
+            return Bullet(x, y, speedX, BulletType.GOLD)
+        }
+
         fun createRightBullet(x: Float, y: Float, speedX: Float): Bullet {
             return Bullet(x, y, speedX, BulletType.RIGHT)
         }
@@ -53,9 +58,10 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
         return when (type) {
 //            BulletType.ATTACK -> attackTexture
 //            BulletType.SHIELD -> shieldTexture
+            BulletType.GOLD -> goldTexture
             BulletType.RIGHT -> rightTexture
             BulletType.LEFT -> leftTexture
-            else -> leftTexture
+            else -> goldTexture
         }
     }
 
@@ -73,6 +79,7 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
     }
 
     override fun dispose() {
+        this.sprite.texture=null
     }
 
     override fun equals(other: Any?): Boolean {

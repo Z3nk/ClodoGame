@@ -1,5 +1,5 @@
 package fr.clodo.arena.enums
 
 enum class BulletType{
-    ATTACK, SHIELD, BOMB, LEFT, RIGHT
+    ATTACK, SHIELD, BOMB, LEFT, RIGHT, GOLD
 }

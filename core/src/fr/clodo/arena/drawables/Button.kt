@@ -16,7 +16,7 @@ class Button(x: Float, y: Float, spriteSheet: String, width: Float, height: Floa
     companion object {
         const val TAG = "Button"
 
-        fun createPlayButton(x: Float, y: Float, callback: () -> Unit): Button {
+        fun createPlayButton(x: Float, y: Float, callback: () -> Unit): Button? {
             Gdx.app.log(TAG, "[PLAY]")
             val width = 400f
             val height = 200f
@@ -29,7 +29,7 @@ class Button(x: Float, y: Float, spriteSheet: String, width: Float, height: Floa
 
 
     private var isAnimed = false
-    private var isAlive = true
+    public var isAlive = true
 
     init {
         sprite = Sprite(Texture(spriteSheet))

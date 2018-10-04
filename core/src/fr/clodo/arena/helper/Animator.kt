@@ -9,9 +9,9 @@ abstract class Animator {
     companion object {
         const val TAG = "Animator"
 
-        fun generateArray(spriteSheet: String, startRow: Int, endRow: Int, startCol: Int, endCol: Int, frameX: Int, frameY: Int, width: Int, height: Int): Array<TextureRegion> {
+        fun generateArray(spriteSheet: Texture, startRow: Int, endRow: Int, startCol: Int, endCol: Int, frameX: Int, frameY: Int, width: Int, height: Int): Array<TextureRegion> {
 
-            val tmp = TextureRegion.split(Texture(spriteSheet), frameX, frameY)
+            val tmp = TextureRegion.split(spriteSheet, frameX, frameY)
 
 
             var currentRow = startRow

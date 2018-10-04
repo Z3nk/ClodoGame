@@ -13,7 +13,7 @@ import fr.clodo.arena.screens.GameScreen
 import java.util.*
 import kotlin.concurrent.timerTask
 
-class Menu: Drawable(), Clickable{
+class Menu : Drawable(), Clickable {
     companion object {
         const val TAG = "Menu"
     }
@@ -27,20 +27,26 @@ class Menu: Drawable(), Clickable{
     }
 
     override fun update(gameScreen: GameScreen, delta: Float) {
-        playBtn.update(gameScreen, delta)
+        if (playBtn != null) {
+            playBtn?.update(gameScreen, delta)
+            if (!playBtn!!.isAlive) {
+                playBtn!!.dispose()
+                playBtn = null
+            }
+        }
 
     }
 
     override fun draw(gameScreen: GameScreen, delta: Float) {
-        playBtn.draw(gameScreen, delta)
+        playBtn?.draw(gameScreen, delta)
     }
 
     override fun dispose() {
-        playBtn.dispose()
+        playBtn?.dispose()
     }
 
     override fun onClick(x: Float, y: Float) {
-        playBtn.onClick(x, y)
+        playBtn?.onClick(x, y)
     }
 
 }

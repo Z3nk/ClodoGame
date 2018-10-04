@@ -1,6 +1,7 @@
 package fr.clodo.arena.drawables
 
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.*
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
@@ -26,14 +27,18 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
         private const val sizeX = 48f
         private const val sizeY = 48f
 
+        private val idleTexture = Texture("skeleton_idle.png")
+        private val attackTexture = Texture("skeleton_attack.png")
+        private val hitTexture = Texture("skeleton_hit.png")
+
         private fun getIdleAnimation() = Animation(frameIdleDuration, getIdleTexture(), Animation.PlayMode.LOOP)
-        private fun getIdleTexture() = Animator.generateArray("skeleton_idle.png", 0, 0, 0, 11, 24, 32, 264, 32)
+        private fun getIdleTexture() = Animator.generateArray(idleTexture, 0, 0, 0, 11, 24, 32, 264, 32)
 
         private fun getAttackAnimation() = Animation(frameAttackDuration, getAttackTexture(), Animation.PlayMode.LOOP_REVERSED)
-        private fun getAttackTexture() = Animator.generateArray("skeleton_attack.png", 0, 0, 0, 18, 43, 37, 774, 37)
+        private fun getAttackTexture() = Animator.generateArray(attackTexture, 0, 0, 0, 18, 43, 37, 774, 37)
 
         private fun getHitAnimation() = Animation(frameAttackDuration, getHitTexture(), Animation.PlayMode.LOOP_REVERSED)
-        private fun getHitTexture() = Animator.generateArray("skeleton_hit.png", 0, 0, 0, 8, 30, 32, 240, 32)
+        private fun getHitTexture() = Animator.generateArray(hitTexture, 0, 0, 0, 8, 30, 32, 240, 32)
     }
 
     private var bulletGenerator: BulletAnimator? = null
@@ -71,11 +76,14 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
             }
 
 
-            var bulletsTmp = mutableListOf<Bullet>()
+            val bulletsTmp = mutableListOf<Bullet>()
             bullets.forEach {
                 it.update(gameScreen, delta)
                 if (it.isAlive) {
                     bulletsTmp.add(it)
+                }
+                else{
+                    it.dispose()
                 }
                 if (it.haveHitten) {
                     hasHitDwarf()
