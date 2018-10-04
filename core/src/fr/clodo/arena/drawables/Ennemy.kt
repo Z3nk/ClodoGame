@@ -2,24 +2,23 @@ package fr.clodo.arena.drawables
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.*
+import com.badlogic.gdx.graphics.g2d.Animation
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import fr.clodo.arena.base.Drawable
+import fr.clodo.arena.enums.AlertScene
 import fr.clodo.arena.enums.BulletType
-import fr.clodo.arena.enums.ClodoScreen
 import fr.clodo.arena.enums.CharacterState
-import fr.clodo.arena.helper.Animator
-import fr.clodo.arena.helper.BulletAnimator
-import fr.clodo.arena.helper.ClodoWorld
-import fr.clodo.arena.helper.LevelGenerator
+import fr.clodo.arena.enums.ClodoScreen
+import fr.clodo.arena.helper.*
 import fr.clodo.arena.screens.GameScreen
 
-class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val attackingAnimation: Animation<TextureRegion>, private val hitAnimation: Animation<TextureRegion>, val level: Int, startX: Float, startY: Float, private val hasHitDwarf: () -> Unit) : Drawable(x = startX, y = startY, width = sizeX, height = sizeY) {
+class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val attackingAnimation: Animation<TextureRegion>, private val hitAnimation: Animation<TextureRegion>, private val deadAnimation: Animation<TextureRegion>, val level: Int, startX: Float, startY: Float, private val alertScene: (mAlertScene: AlertScene) -> Unit) : Drawable(x = startX, y = startY, width = sizeX, height = sizeY) {
 
     companion object {
-        fun createEnnemy(level: Int, startX: Float, startY: Float, hasHitDwarf: () -> Unit): Ennemy {
-            return Ennemy(getIdleAnimation(), getAttackAnimation(), getHitAnimation(), level, startX, startY, hasHitDwarf)
+        fun createEnnemy(level: Int, startX: Float, startY: Float, alertScene: (mAlertScene: AlertScene) -> Unit): Ennemy {
+            return Ennemy(getIdleAnimation(), getAttackAnimation(), getHitAnimation(), getDeadAnimation(), level, startX, startY, alertScene)
         }
 
         private const val frameIdleDuration = 0.15f
@@ -30,6 +29,7 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
         private val idleTexture = Texture("skeleton_idle.png")
         private val attackTexture = Texture("skeleton_attack.png")
         private val hitTexture = Texture("skeleton_hit.png")
+        private val deadTexture = Texture("skeleton_dead.png")
 
         private fun getIdleAnimation() = Animation(frameIdleDuration, getIdleTexture(), Animation.PlayMode.LOOP)
         private fun getIdleTexture() = Animator.generateArray(idleTexture, 0, 0, 0, 11, 24, 32, 264, 32)
@@ -39,14 +39,18 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
 
         private fun getHitAnimation() = Animation(frameAttackDuration, getHitTexture(), Animation.PlayMode.LOOP_REVERSED)
         private fun getHitTexture() = Animator.generateArray(hitTexture, 0, 0, 0, 8, 30, 32, 240, 32)
+
+        private fun getDeadAnimation() = Animation(frameAttackDuration, getDeadTexture(), Animation.PlayMode.REVERSED)
+        private fun getDeadTexture() = Animator.generateArray(deadTexture, 0, 0, 0, 15, 33, 32, 495, 32)
     }
 
     private var bulletGenerator: BulletAnimator? = null
     private var bullets = mutableListOf<Bullet>()
-    private var alive = true
     private var stateTime: Float = 0f
-    private var state = CharacterState.IDLE
-    private var health: Int = 20
+    public var state = CharacterState.IDLE
+    private var health = 20f
+    private val startHealth: Int
+    private var alive = true
 
     init {
         sprite.setPosition(x, y)
@@ -54,44 +58,53 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
         getBulletGenerator(x, y) {
             bulletGenerator = it
         }
-        health = 20 * level
+        health = 20f * level
+        startHealth = 20 * level
     }
 
     override fun update(gameScreen: GameScreen, delta: Float) {
         stateTime += delta
 
-        if (isFightingAndAliveAndOnScreen(gameScreen.camera)) {
-            if ((state == CharacterState.ATTACK && attackingAnimation.isAnimationFinished(stateTime)) || (state == CharacterState.HIT && hitAnimation.isAnimationFinished(stateTime))) {
-                state = CharacterState.IDLE
-                stateTime = 0.0f
-            }
-            if (state != CharacterState.HIT) {
-                (haveNewBulletToThrow(delta))?.let {
-                    if (state != CharacterState.ATTACK) {
-                        state = CharacterState.ATTACK
-                        stateTime = 0.0f
+        if (isFightingAndOnScreen(gameScreen.camera)) {
+
+            // CHARACTER
+            if (state != CharacterState.DEAD) {
+                if ((state == CharacterState.ATTACK && attackingAnimation.isAnimationFinished(stateTime)) || (state == CharacterState.HIT && hitAnimation.isAnimationFinished(stateTime))) {
+                    state = CharacterState.IDLE
+                    stateTime = 0.0f
+                }
+                if (state != CharacterState.HIT) {
+                    (haveNewBulletToThrow(delta))?.let {
+                        if (state != CharacterState.ATTACK) {
+                            state = CharacterState.ATTACK
+                            stateTime = 0.0f
+                        }
+                        bullets.add(it)
                     }
-                    bullets.add(it)
+                }
+                // BULLETS
+                val bulletsTmp = mutableListOf<Bullet>()
+                bullets.forEach {
+                    it.update(gameScreen, delta)
+                    if (it.isAlive) {
+                        bulletsTmp.add(it)
+                    } else {
+                        it.dispose()
+                    }
+                    if (it.haveHitten) {
+                        alertScene(AlertScene.STRIKE)
+                    }
+                }
+                bullets = bulletsTmp
+            } else {
+                if (alive && attackingAnimation.isAnimationFinished(stateTime)) {
+                    alive = false
+                    alertScene(AlertScene.DEAD)
                 }
             }
 
 
-            val bulletsTmp = mutableListOf<Bullet>()
-            bullets.forEach {
-                it.update(gameScreen, delta)
-                if (it.isAlive) {
-                    bulletsTmp.add(it)
-                }
-                else{
-                    it.dispose()
-                }
-                if (it.haveHitten) {
-                    hasHitDwarf()
-                }
-            }
-            bullets = bulletsTmp
         }
-
 
     }
 
@@ -101,31 +114,34 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
     }
 
     override fun draw(gameScreen: GameScreen, delta: Float) {
+        if (alive) {
+            when (state) {
+                CharacterState.IDLE -> {
+                    sprite.setRegion(idleAnimation.getKeyFrame(stateTime))
+                }
+                CharacterState.RUN -> {
+                    // NOT POSSIBLE
+                }
+                CharacterState.HIT -> {
+                    sprite.setRegion(hitAnimation.getKeyFrame(stateTime))
+                }
+                CharacterState.ATTACK -> {
+                    sprite.setRegion(attackingAnimation.getKeyFrame(stateTime))
+                }
+                CharacterState.DEAD -> {
+                    sprite.setRegion(deadAnimation.getKeyFrame(stateTime))
+                }
+            }
 
-        when (state) {
-            CharacterState.IDLE -> {
-                sprite.setRegion(idleAnimation.getKeyFrame(stateTime))
+            sprite.draw(gameScreen.batch)
+            bullets.forEach {
+                it.draw(gameScreen, delta)
             }
-            CharacterState.RUN -> {
-                // NOT POSSIBLE
-            }
-            CharacterState.HIT -> {
-                sprite.setRegion(hitAnimation.getKeyFrame(stateTime))
-            }
-            CharacterState.ATTACK -> {
-                sprite.setRegion(attackingAnimation.getKeyFrame(stateTime))
-            }
-            CharacterState.DEAD -> TODO()
-        }
-
-        sprite.draw(gameScreen.batch)
-        bullets.forEach {
-            it.draw(gameScreen, delta)
         }
     }
 
     override fun dispose() {
-        sprite.texture.dispose()
+        sprite.texture = null
         bullets.forEach { it.dispose() }
     }
 
@@ -135,8 +151,8 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
         }
     }
 
-    private fun isFightingAndAliveAndOnScreen(camera: Camera): Boolean = ClodoWorld.currentScreen == ClodoScreen.IN_GAME_FIGHTING && isAliveAndOnScreen(camera)
-    private fun isAliveAndOnScreen(camera: Camera): Boolean = alive && camera.project(Vector3(Vector2(x, y), 0f)).x < 1920 - width
+    private fun isFightingAndOnScreen(camera: Camera): Boolean = ClodoWorld.currentScreen == ClodoScreen.IN_GAME_FIGHTING && isOnScreen(camera)
+    private fun isOnScreen(camera: Camera): Boolean = camera.project(Vector3(Vector2(x, y), 0f)).x < 1920 - width
     fun onClick(x: Float, y: Float, callback: (mBulletType: BulletType) -> Unit) {
         bullets.forEach {
             it.onClick(x, y) {
@@ -148,31 +164,38 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
 
                     }
                     BulletType.ATTACK -> {
-                        state = CharacterState.HIT
-                        stateTime = 0.0f
-                        health -= 20
+                        getDamage()
                     }
                     BulletType.LEFT -> {
                         if (ClodoWorld.hasClickedRight) {
-                            hasHitDwarf()
+                            alertScene(AlertScene.STRIKE)
                         } else {
-                            state = CharacterState.HIT
-                            stateTime = 0.0f
-                            health -= 20
+                            getDamage()
                         }
 
                     }
                     BulletType.RIGHT -> {
                         if (ClodoWorld.hasClickedRight) {
-                            state = CharacterState.HIT
-                            stateTime = 0.0f
-                            health -= 20
+                            getDamage()
                         } else {
-                            hasHitDwarf()
+                            alertScene(AlertScene.STRIKE)
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun getDamage() {
+        state = CharacterState.HIT
+        stateTime = 0.0f
+        health -= 20f
+        if (health <= 0) {
+            ClodoWorld.currentHealthPourcent = 0f
+            state = CharacterState.DEAD
+            stateTime = 0.0f
+        } else {
+            ClodoWorld.currentHealthPourcent = health / startHealth
         }
     }
 

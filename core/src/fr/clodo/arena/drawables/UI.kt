@@ -2,6 +2,7 @@ package fr.clodo.arena.drawables
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
@@ -32,7 +33,13 @@ class UI : fr.clodo.arena.base.Drawable(x = startX, y = startY) {
             x = v.x
             y = v.y
             val y2 = gameScreen.camera.unproject(Vector3(Vector2(startX, startY + UI.height), 0f)).y
-            Drawer.DrawDebugLine(Vector2(x, y), Vector2(x, y2), gameScreen.camera.combined)
+            Drawer.DrawDebugLine(Vector2(x, y), Vector2(x, y2), Color.WHITE, gameScreen.camera.combined)
+
+
+            // HP BOSS
+            var v1 = gameScreen.camera.unproject(Vector3(Vector2(1920f - 200f, 1000f), 0f))
+            val v2 = gameScreen.camera.unproject(Vector3(Vector2(1920f -200 + (100f * ClodoWorld.currentHealthPourcent), 1000f), 0f))
+            Drawer.DrawDebugLine(Vector2(v1.x, v1.y), Vector2(v2.x, v2.y), Color.GREEN, gameScreen.camera.combined)
         }
 
 //        for(y in 0..1080 step 100){

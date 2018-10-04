@@ -67,7 +67,6 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
                 state = CharacterState.IDLE
             }
             ClodoScreen.IN_GAME_WALKING -> {
-                stateTime = 0.0f
                 state = CharacterState.RUN
                 x += (speedX * delta)
                 sprite.setPosition(x, y)

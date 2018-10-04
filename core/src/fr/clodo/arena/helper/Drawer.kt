@@ -11,22 +11,12 @@ import com.badlogic.gdx.math.Vector2
 abstract class Drawer{
     companion object {
         val debugRenderer = ShapeRenderer()
-        fun DrawDebugLine(projectionMatrix: Matrix4) {
-            val sr = ShapeRenderer()
-            sr.color = Color.BLACK
-            sr.projectionMatrix = projectionMatrix
 
-            sr.begin(ShapeType.Filled)
-            sr.rectLine(0f, 0f,
-                   100f, 100f, 2f)
-            sr.end()
-        }
-
-        fun DrawDebugLine(start: Vector2, end: Vector2, projectionMatrix: Matrix4) {
+        fun DrawDebugLine(start: Vector2, end: Vector2, white: Color, projectionMatrix: Matrix4) {
             Gdx.gl.glLineWidth(8f)
             debugRenderer.projectionMatrix = projectionMatrix
             debugRenderer.begin(ShapeRenderer.ShapeType.Line)
-            debugRenderer.color = Color.WHITE
+            debugRenderer.color = white
             debugRenderer.line(start, end)
             debugRenderer.end()
             Gdx.gl.glLineWidth(1f)

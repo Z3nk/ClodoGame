@@ -16,6 +16,9 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
         private var goldTexture = Texture("icon_gold.png")
         private var rightTexture = Texture("icon_right.png")
         private var leftTexture = Texture("icon_left.png")
+        private var goldTextureHover = Texture("icon_gold_hover.png")
+        private var rightTextureHover = Texture("icon_right_hover.png")
+        private var leftTextureHover = Texture("icon_left_hover.png")
         private const val sizeX = 32f
         private const val sizeY = 32f
         fun createGoldBullet(x: Float, y: Float, speedX: Float): Bullet {
@@ -56,8 +59,6 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
 
     private fun getTextureOf(type: BulletType): Texture {
         return when (type) {
-//            BulletType.ATTACK -> attackTexture
-//            BulletType.SHIELD -> shieldTexture
             BulletType.GOLD -> goldTexture
             BulletType.RIGHT -> rightTexture
             BulletType.LEFT -> leftTexture
@@ -65,9 +66,21 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
         }
     }
 
+    private fun getTextureHoverOf(type: BulletType): Texture {
+        return when (type) {
+            BulletType.GOLD -> goldTextureHover
+            BulletType.RIGHT -> rightTextureHover
+            BulletType.LEFT -> leftTextureHover
+            else -> goldTexture
+        }
+    }
+
     override fun update(gameScreen: GameScreen, delta: Float) {
         x += (speedX * delta)
         sprite.setPosition(x, y)
+        if (x <= UI.getUnprojectX(gameScreen)) {
+            sprite.texture = getTextureHoverOf(type)
+        }
         if (x + width < UI.getUnprojectX(gameScreen)) {
             haveHitten = true
             isAlive = false
@@ -79,7 +92,7 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
     }
 
     override fun dispose() {
-        this.sprite.texture=null
+        this.sprite.texture = null
     }
 
     override fun equals(other: Any?): Boolean {

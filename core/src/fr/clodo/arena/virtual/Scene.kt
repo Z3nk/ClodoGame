@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector3
 import fr.clodo.arena.base.Clickable
 import fr.clodo.arena.base.Drawable
 import fr.clodo.arena.drawables.*
+import fr.clodo.arena.enums.AlertScene
 import fr.clodo.arena.enums.BulletType
 import fr.clodo.arena.enums.ClodoScreen
 import fr.clodo.arena.helper.ClodoWorld
@@ -22,9 +23,18 @@ class Scene() : Drawable(), Clickable {
 
 
     init {
-        for (i in 1..2) {
-            ennemies.add(Ennemy.createEnnemy(i, i * 600f, 120f){
-                dwarf.isHit()
+        for (i in 1..ClodoWorld.maxLevel) {
+            ennemies.add(Ennemy.createEnnemy(i, i * 600f, 120f) {
+                if (it == AlertScene.STRIKE) {
+                    dwarf.isHit()
+                } else {
+                    if (ClodoWorld.currentScreen != ClodoScreen.IN_GAME_WALKING) {
+                        if (ClodoWorld.currentLevel < ClodoWorld.maxLevel) {
+                            ClodoWorld.currentScreen = ClodoScreen.IN_GAME_WALKING
+                            ClodoWorld.currentLevel++
+                        }
+                    }
+                }
             })
         }
     }
@@ -37,10 +47,17 @@ class Scene() : Drawable(), Clickable {
         //Gdx.app.log(TAG, "Position unproject du current ennemie x : ${ennemies[ClodoWorld.currentLevel-1].sprite.x}: projeté x : " + gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel-1].sprite.x, ennemies[ClodoWorld.currentLevel-1].sprite.y), 0f)).toString())
         if (ClodoWorld.currentScreen == ClodoScreen.IN_GAME_WALKING && haveWalkedToNextBoss(gameScreen)) {
             ClodoWorld.currentScreen = ClodoScreen.IN_GAME_FIGHTING
+            ClodoWorld.currentHealthPourcent = 1.0f
         }
     }
 
-    private fun haveWalkedToNextBoss(gameScreen: GameScreen) = gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel - 1].sprite.x, ennemies[ClodoWorld.currentLevel - 1].sprite.y), 0f)).x < 1920 - 250
+    private fun haveWalkedToNextBoss(gameScreen: GameScreen): Boolean {
+        try {
+            return gameScreen.camera.project(Vector3(Vector2(ennemies[ClodoWorld.currentLevel - 1].sprite.x, ennemies[ClodoWorld.currentLevel - 1].sprite.y), 0f)).x < 1920 - 250
+        } catch (e: Exception) {
+            throw RuntimeException()
+        }
+    }
 
     override fun draw(gameScreen: GameScreen, delta: Float) {
         background.draw(gameScreen, delta)
@@ -58,8 +75,8 @@ class Scene() : Drawable(), Clickable {
 
     override fun onClick(x: Float, y: Float) {
         dwarf.onClick(x, y)
-        ennemies[ClodoWorld.currentLevel - 1].onClick(x, y){
-            when(it){
+        ennemies[ClodoWorld.currentLevel - 1].onClick(x, y) {
+            when (it) {
                 BulletType.BOMB -> {
                 }
                 BulletType.SHIELD -> {
