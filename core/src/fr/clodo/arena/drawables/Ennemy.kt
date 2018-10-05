@@ -3,6 +3,7 @@ package fr.clodo.arena.drawables
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
@@ -51,6 +52,7 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
     private var health = 20f
     private val startHealth: Int
     private var alive = true
+    private var narrator: Narrator? = null
 
     init {
         sprite.setPosition(x, y)
@@ -58,15 +60,18 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
         getBulletGenerator(x, y) {
             bulletGenerator = it
         }
-        health = 20f //* level
-        startHealth = 20 //* level
+        health = 20f * level * 10
+        startHealth = 20 * level * 10
+        if (level == 1) {
+            narrator = Narrator()
+        }
     }
 
     override fun update(gameScreen: GameScreen, delta: Float) {
         stateTime += delta
 
         if (isFightingAndOnScreen(gameScreen.camera)) {
-
+            narrator?.update(gameScreen, delta)
             // CHARACTER
             if (state != CharacterState.DEAD) {
                 if ((state == CharacterState.ATTACK && attackingAnimation.isAnimationFinished(stateTime)) || (state == CharacterState.HIT && hitAnimation.isAnimationFinished(stateTime))) {
@@ -115,6 +120,9 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
 
     override fun draw(gameScreen: GameScreen, delta: Float) {
         if (alive) {
+            if (isFightingAndOnScreen(gameScreen.camera)) {
+                narrator?.draw(gameScreen, delta)
+            }
             when (state) {
                 CharacterState.IDLE -> {
                     sprite.setRegion(idleAnimation.getKeyFrame(stateTime))
@@ -141,8 +149,6 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
     }
 
     override fun dispose() {
-        sprite.texture = null
-        bullets.forEach { it.dispose() }
     }
 
     private fun getBulletGenerator(x: Float, y: Float, function: (mBulletAnimator: BulletAnimator) -> Unit): Unit {
@@ -170,12 +176,16 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
                         if (ClodoWorld.hasClickedRight) {
                             alertScene(AlertScene.STRIKE)
                         } else {
+                            narrator?.dispose()
+                            narrator = null
                             getDamage()
                         }
 
                     }
                     BulletType.RIGHT -> {
                         if (ClodoWorld.hasClickedRight) {
+                            narrator?.dispose()
+                            narrator = null
                             getDamage()
                         } else {
                             alertScene(AlertScene.STRIKE)

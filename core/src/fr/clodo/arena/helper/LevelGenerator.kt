@@ -36,7 +36,7 @@ object LevelGenerator {
     }
 
     private fun getRandomBulletType(): BulletType {
-        var r = random.nextInt(9)
+        val r = random.nextInt(9)
         return if (r == 0) BulletType.GOLD
         else {
             if (r <= 4) {
