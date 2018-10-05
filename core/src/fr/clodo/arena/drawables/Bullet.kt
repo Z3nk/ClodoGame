@@ -104,7 +104,6 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
     }
 
     fun onClick(x: Float, y: Float, callback: (mBulletType: BulletType) -> Unit) {
-        Gdx.app.log("Bullet", "$x $y  <=> " + this.x + " " + this.y)
         if (isClickOnMe(x, y)) {
             isAlive = false
             callback(type)

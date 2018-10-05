@@ -16,6 +16,6 @@ abstract class ClodoWorld {
         var currentScreen = ClodoScreen.LOBBY
         var hasClickedRight = false
         var currentHealthPourcent = 1.0f
-        var maxLevel = 7
+        var maxLevel = 6
     }
 }

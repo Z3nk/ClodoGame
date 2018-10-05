@@ -1,5 +1,6 @@
 package fr.clodo.arena.virtual
 
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import fr.clodo.arena.base.Clickable
@@ -16,8 +17,12 @@ class Scene() : Drawable(), Clickable {
         const val TAG = "Scene"
     }
 
-    private val background = Background.createNightBackground()
+    private val background = Background.createNightBackground(0f, 0f)
+    private val background2 = Background.createNightBackground(1927f, 0f)
     private val dwarf = Dwarf.createDwarf()
+
+    private val corner = Corner()
+
     //private val ui = UI(gameScreen)
     var ennemies = mutableListOf<Ennemy>()
 
@@ -41,6 +46,8 @@ class Scene() : Drawable(), Clickable {
 
     override fun update(gameScreen: GameScreen, delta: Float) {
         background.update(gameScreen, delta)
+        background2.update(gameScreen, delta)
+        corner.update(gameScreen, delta)
         dwarf.update(gameScreen, delta)
         ennemies.forEach { it.update(gameScreen, delta) }
         //ui.update(gameScreen, delta)
@@ -61,6 +68,8 @@ class Scene() : Drawable(), Clickable {
 
     override fun draw(gameScreen: GameScreen, delta: Float) {
         background.draw(gameScreen, delta)
+        background2.draw(gameScreen, delta)
+        corner.draw(gameScreen, delta)
         dwarf.draw(gameScreen, delta)
         ennemies.forEach { it.draw(gameScreen, delta) }
         //ui.draw(batch, font, delta)
@@ -69,6 +78,7 @@ class Scene() : Drawable(), Clickable {
     override fun dispose() {
         dwarf.dispose()
         background.dispose()
+        background2.dispose()
         ennemies.forEach { it.dispose() }
         //ui.dispose()
     }

@@ -58,8 +58,8 @@ class Ennemy(private val idleAnimation: Animation<TextureRegion>, private val at
         getBulletGenerator(x, y) {
             bulletGenerator = it
         }
-        health = 20f * level
-        startHealth = 20 * level
+        health = 20f //* level
+        startHealth = 20 //* level
     }
 
     override fun update(gameScreen: GameScreen, delta: Float) {
