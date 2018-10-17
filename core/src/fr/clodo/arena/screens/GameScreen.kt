@@ -95,7 +95,8 @@ class GameScreen(val game: ClodoArenaGame) : Screen, InputProcessor {
         ClodoWorld.hasClickedRight = screenX > ClodoWorld.WORLD_WIDTH/2
         val worldCoordinates = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
         Gdx.app.log(TAG, "Unproject at " + worldCoordinates.x + "," + worldCoordinates.y)
-        scene.onClick(ui.x, ui.y)
+        // En vrai le 20 devrait etre remplacer par le unproject de la hauteur de ui /2
+        scene.onClick(ui.x, ui.y - 20)
         menu.onClick(worldCoordinates.x, worldCoordinates.y)
         return false
     }

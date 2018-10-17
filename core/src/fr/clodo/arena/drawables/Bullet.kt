@@ -1,6 +1,5 @@
 package fr.clodo.arena.drawables
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import fr.clodo.arena.base.Drawable
@@ -78,10 +77,10 @@ class Bullet(x: Float, y: Float, val speedX: Float, val type: BulletType) : Draw
     override fun update(gameScreen: GameScreen, delta: Float) {
         x += (speedX * delta)
         sprite.setPosition(x, y)
-        if (x <= UI.getUnprojectX(gameScreen)) {
+        if (x <= UI.getUnprojectXOfShotBar(gameScreen)) {
             sprite.texture = getTextureHoverOf(type)
         }
-        if (x + width < UI.getUnprojectX(gameScreen)) {
+        if (x + width < UI.getUnprojectXOfShotBar(gameScreen)) {
             haveHitten = true
             isAlive = false
         }

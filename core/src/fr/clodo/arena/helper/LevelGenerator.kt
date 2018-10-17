@@ -13,7 +13,7 @@ object LevelGenerator {
     const val TAG = "LevelGenerator"
     private val random = Random()
     private val intensity = floatArrayOf(2f, 1.8f, 1.4f, 0.8f, 0.7f, 0.6f)
-    private val speedRange = mutableListOf(Pair(-60f, -150f), Pair(-80f, -200f), Pair(-120f, -200f), Pair(-140f, -200f), Pair(-160f, -200f), Pair(-180f, -200f))
+    private val speedRange = mutableListOf(Pair(-90f, -90f), Pair(-110f, -110f), Pair(-130f, -130f), Pair(-150f, -150f), Pair(-170f, -170f), Pair(-190f, -190f))
     fun generateLevel(level: Int, x: Float, y: Float, function: (list: LinkedList<Pair<Float, Bullet>>) -> Unit): Unit {
         val asyncExecutor = AsyncTask {
             val bullets = LinkedList<Pair<Float, Bullet>>()

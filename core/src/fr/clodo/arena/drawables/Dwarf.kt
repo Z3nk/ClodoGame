@@ -22,7 +22,7 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
         private const val sizeX = 64f
         private const val sizeY = 64f
         private const val startX = 20f
-        private const val startY = 100f
+        private const val startY = 120f
         const val speedX = 300f
 
         private val walkTexture = Texture("spritesheet.png")
@@ -45,10 +45,14 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
         private fun getAttackTexture() = Animator.generateArray(attackTexture, 0, 0, 0, 4, 100, 62, 400, 62)
     }
 
+    private var health = 20f
+    private val startHealth: Int
     private var stateTime: Float = 0f
     private var state = CharacterState.IDLE
 
     init {
+        health = 100f
+        startHealth = 100
         sprite.setPosition(x, y)
         sprite.setSize(width, height)
     }
@@ -125,6 +129,14 @@ class Dwarf(val walkingAnimation: Animation<TextureRegion>, val idleingAnimation
     fun isHit() {
         stateTime = 0.0f
         state = CharacterState.HIT
+        health -= 20f
+        if (health <= 0) {
+            ClodoWorld.currentPlayerHealthPourcent = 0f
+            state = CharacterState.DEAD
+            stateTime = 0.0f
+        } else {
+            ClodoWorld.currentPlayerHealthPourcent = health / startHealth
+        }
     }
 
 }

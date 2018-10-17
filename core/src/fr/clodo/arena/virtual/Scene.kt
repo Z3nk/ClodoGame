@@ -29,7 +29,7 @@ class Scene() : Drawable(), Clickable {
 
     init {
         for (i in 1..ClodoWorld.maxLevel) {
-            ennemies.add(Ennemy.createEnnemy(i, i * 600f, 120f) {
+            ennemies.add(Ennemy.createEnnemy(i, i * 600f, 130f) {
                 if (it == AlertScene.STRIKE) {
                     dwarf.isHit()
                 } else {
