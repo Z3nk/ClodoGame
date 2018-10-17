@@ -30,17 +30,23 @@ class Scene() : Drawable(), Clickable {
     init {
         for (i in 1..ClodoWorld.maxLevel) {
             ennemies.add(Ennemy.createEnnemy(i, i * 600f, 130f) {
-                if (it == AlertScene.STRIKE) {
-                    dwarf.isHit()
-                } else {
-                    if (ClodoWorld.currentScreen != ClodoScreen.IN_GAME_WALKING) {
-                        if (ClodoWorld.currentLevel < ClodoWorld.maxLevel) {
-                            ClodoWorld.currentScreen = ClodoScreen.IN_GAME_WALKING
-                            ClodoWorld.currentLevel++
-                        }
+                manageAlert(it)
+            })
+        }
+    }
+
+    private fun manageAlert(it: AlertScene) {
+        if (it == AlertScene.STRIKE) {
+            dwarf.isHit()
+        } else {
+            if (it == AlertScene.DEAD) {
+                if (ClodoWorld.currentScreen != ClodoScreen.IN_GAME_WALKING) {
+                    if (ClodoWorld.currentLevel < ClodoWorld.maxLevel) {
+                        ClodoWorld.currentScreen = ClodoScreen.IN_GAME_WALKING
+                        ClodoWorld.currentLevel++
                     }
                 }
-            })
+            }
         }
     }
 
